@@ -1,0 +1,17 @@
+<html>
+<head>
+  <script src="js/weirdPlayer/main.js"></script>
+</head>
+<body>
+  <div id="weirdPlayer">
+    <a href="#" class="wcp-play">Play</a>
+    <a href="#" class="wcp-pause">Pause</a>
+    <a href="#" class="wcp-stop">Stop</a>
+  </div>
+  <script>
+    window.weirdPlayer.main.setup(
+      document.querySelector("#weirdPlayer"),
+      "/test.json");
+  </script>
+</body>
+</html>
