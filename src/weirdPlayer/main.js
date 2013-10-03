@@ -194,8 +194,7 @@
     }
 
     function setup(playerNode, options) {
-        var apiUrl        = options.apiUrl,
-            debug         = attr(options, "debug", false),
+        var debug         = attr(options, "debug", false),
             useTestLoader = attr(options, "useTestLoader", false);
 
         util.debug = debug;
@@ -203,7 +202,7 @@
         var loader =
                 useTestLoader
                 ? createTestLoader(window.tests.fixture.responses)
-                : createLoader(apiUrl),
+                : createLoader({apiUrl: options.apiUrl, jsonp: options.jsonp}),
 
             model  = createWcpModel(loader),
             view   = createWcpView(model, playerNode);

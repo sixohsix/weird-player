@@ -20,7 +20,8 @@
 
     function htmlContent(post) { // WpJsonResponse -> HTMLDivElement
         var htmlStr = post.content,
-            div     = document.createElement("div");
+            doc     = document.implementation.createHTMLDocument("jail"),
+            div     = doc.createElement("div");
         div.innerHTML = htmlStr;
         return div;
     }
@@ -34,7 +35,8 @@
                 })
                 .filter(function (arr) {
                     return arr.length > 0;
-                });
+                })
+                .reverse();
         if (empty(sourceLists))
             return parseFail("no audio source nodes found", []);
         return sourceLists;

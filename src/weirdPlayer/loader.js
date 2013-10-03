@@ -4,7 +4,9 @@
         doNothing = util.doNothing,
         attr      = util.attr,
 
-        parse     = window.weirdPlayer.parse.parse;
+        parse     = window.weirdPlayer.parse.parse,
+
+        jsonpIdx  = 0;
 
     function wpApiParamStr(params) {
         var pStr = "?json=get_recent_posts";
@@ -26,8 +28,9 @@
     }
 
     function getJson(req) {
-        var jsonData;
-        if (req.responseType === "json") {
+        var jsonData,
+            rTyp = req.responseType;
+        if (rTyp === "json") {
             jsonData = req.response;
         } else {
             jsonData = window.JSON.parse(req.responseText);
@@ -35,11 +38,37 @@
         return jsonData;
     }
 
+    function loadJsonp(apiUrl, params, callback) {
+        var globalCbName = "pureEvil" + jsonpIdx,
+            scr = document.createElement("script"),
+            head = document.querySelector("head");
+        jsonpIdx++;
+        window[globalCbName] = function (json) {
+            callback(json);
+            head.removeChild(scr);
+        };
+        params.callback = globalCbName;
+        scr.src = apiUrl + wpApiParamStr(params);  // YOLO
+        head.appendChild(scr);
+    }
+
     function createLoader(options) {
         var l = {};
 
         var apiUrl = attr(options, "apiUrl", "/category/content/newcanadiana/"),
-            pages  = attr(options, "pages", 905);
+            pages  = attr(options, "pages", 905),
+            jsonp  = attr(options, "jsonp", false);
+
+        function loadSongsAjax(params, callback) {
+            function okCallback(req) {
+                var json = getJson(req);
+                callback(json);
+            }
+            function failCallback(req) {
+                callback({});
+            }
+            loadAjax(apiUrl, params, okCallback, failCallback);
+        }
 
         function loadSongs(callback) {
             var page = (Math.random() * pages)|0,
@@ -47,15 +76,12 @@
                     count: "1",
                     page:  "" + page
                 };
-            function okCallback(req) {
-                var json = getJson(req);
+            function handleJsonData(json) {
                 pages = attr(json, "pages", pages);
                 callback(parse(json));
             }
-            function failCallback(req) {
-                callback([]);
-            }
-            loadAjax(apiUrl, params, okCallback, failCallback);
+            if (jsonp) loadJsonp(apiUrl, params, handleJsonData);
+            else loadSongsAjax(params, handleJsonData);
         }
         l.loadSongs = loadSongs;
 

@@ -26,7 +26,7 @@ window.weirdPlayer.util = (function (window) {
     exports.maybe = maybe;
 
     function attr(o, an, d) {
-        return defined(o) ? o[an] : d;
+        return defined(o) && defined(o[an]) ? o[an] : d;
     }
     exports.attr = attr;
 
