@@ -27,10 +27,10 @@
 
     function getJson(req) {
         var jsonData;
-        if (req.responseType !== "json") {
-            jsonData = window.JSON.parse(req.responseText);
-        } else {
+        if (req.responseType === "json") {
             jsonData = req.response;
+        } else {
+            jsonData = window.JSON.parse(req.responseText);
         }
         return jsonData;
     }
@@ -48,7 +48,9 @@
                     page:  "" + page
                 };
             function okCallback(req) {
-                callback(parse(getJson(req)));
+                var json = getJson(req);
+                pages = attr(json, "pages", pages);
+                callback(parse(json));
             }
             function failCallback(req) {
                 callback([]);
