@@ -72,5 +72,10 @@ window.weirdPlayer.parse = (function (window) {
     }
     exports.parseImage = parseImage;
 
+    function parsePostUrl(post) {
+        return post.url;
+    }
+    exports.parsePostUrl = parsePostUrl;
+
     return exports;
 })(window);

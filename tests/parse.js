@@ -54,4 +54,9 @@
         eq(imageNode.src, "http://weirdcanada.com/wp-content/uploads/2013/09/Nouveau_Zodiaque-web-300x300.jpg");
     });
 
+    test("parse link to post", function () {
+        var url = parse.parsePostUrl(post);
+        ok(defined(url), "got the url");
+    });
+
 })(window);
