@@ -88,7 +88,7 @@
         query(playerNode, ".wcp-postUrl").forEach(function (node) {
             node.href = song.postUrl; });
         query(playerNode, ".wcp-img").forEach(function (node) {
-            query(node, "img").forEach(function (n) { n.remove(); });
+            query(node, "img").forEach(function (n) { node.removeChild(n); });
             node.appendChild(song.image);
         });
     }
@@ -129,7 +129,7 @@
         function setupAudioNode(sources) {
             if (defined(audioNode)) {
                 audioNode.pause();
-                audioNode.remove();
+                playerNode.removeChild(audioNode);
             }
             audioNode = loadedAudioNode(sources);
             playerNode.appendChild(audioNode);
