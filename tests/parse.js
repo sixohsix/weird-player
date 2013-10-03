@@ -59,4 +59,14 @@
         ok(defined(url), "got the url");
     });
 
+    test("parse songs from a complete json response", function () {
+        var songs = parse.parse(fixture.aJsonResponse);
+        eq(songs.length, 2, "got two songs");
+        eq(songs[0].artist, "Nouveau Zodiaque", "got artist");
+        eq(songs[1].release, "Nouveau Zodiaque EP", "got release");
+        eq(songs[0].sources.length, 2, "got audio sources");
+        ok(defined(songs[1].image), "got an image");
+        eq(songs[0].title, "Au Parc Jarry", "got song title");
+    });
+
 })(window);

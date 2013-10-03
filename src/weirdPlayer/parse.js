@@ -77,5 +77,34 @@ window.weirdPlayer.parse = (function (window) {
     }
     exports.parsePostUrl = parsePostUrl;
 
+    function parse(jsonResponse) { // WpJsonResponse -> [{artist, release, image, sources, title, postUrl}]
+        var post = singlePost(jsonResponse),
+            html = htmlContent(post),
+            artistData = parseArtistData(post),
+            sourceLists = parseAudioNodes(html),
+            songTitles = parseSongTitleLinks(html),
+            imgNode = parseImage(html),
+            url = parsePostUrl(post);
+
+        if (! (defined(artistData)
+               && defined(sourceLists)
+               && defined(songTitles)
+               && defined(imgNode)
+               && sourceLists.length === songTitles.length))
+            return [];
+
+        var songs = [];
+        for (var i = 0; i < songTitles.length; i++)
+            songs.push({
+                artist: artistData.artist,
+                release: artistData.release,
+                image: imgNode,
+                sources: sourceLists[i],
+                title: songTitles[i],
+                postUrl: url});
+        return songs;
+    }
+    exports.parse = parse;
+
     return exports;
 })(window);
