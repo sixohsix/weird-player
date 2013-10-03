@@ -4,6 +4,8 @@
     var exports = {},
         log     = window.console.log,
 
+        parse   = window.weirdPlayer.parse.parse,
+
         actions = [],
         running = false;
 
@@ -54,14 +56,6 @@
         req.send();
     }
 
-    function parseSong(jsonResponse) {
-        var htmlStr = jsonResponse.posts[0].content,
-            div     = document.createElement("div");
-        div.innerHTML = htmlStr;
-        var url = div.querySelector("audio source").src;
-        return createSong(url);
-    }
-
     function loadRandomSong(weirdPlayer) {
         var params = {
             "count": "1",
@@ -74,7 +68,7 @@
             } else {
                 jsonData = req.response;
             }
-            weirdPlayer.currentSong = parseSong(jsonData);
+            weirdPlayer.currentSong = parse(jsonData);
         }
         function failCallback(req) {
             log("The AJAX request failed, pal.");
@@ -109,12 +103,6 @@
         var node = weirdPlayer.playerNode;
         node.querySelector(".wcp-play").onclick =
             play.bind(undefined, weirdPlayer);
-    }
-
-    function createSong(url) {
-        return {
-            "url": url
-        };
     }
 
     function createWeirdPlayer(playerNode, apiUrl) {
