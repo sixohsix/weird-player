@@ -4,18 +4,13 @@ window.weirdPlayer.parse = (function (window) {
     var exports = {},
         RegExp  = window.RegExp,
         util    = window.weirdPlayer.util,
-        defined = util.defined;
+        defined = util.defined,
+        query   = util.query;
 
     function singlePost(jsonResponse) {
         return jsonResponse.posts[0];
     }
     exports.singlePost = singlePost;
-
-    function nodeListToArray(nl) { // NodeList -> Array
-        var arr = [];
-        for (var n of nl) arr.push(n);
-        return arr;
-    }
 
     function htmlContent(post) { // WpJsonResponse -> HTMLDivElement
         var htmlStr = post.content,
@@ -26,10 +21,10 @@ window.weirdPlayer.parse = (function (window) {
     exports.htmlContent = htmlContent;
 
     function parseAudioNodes(html) { // HTMLElement -> [[AudioSourceNode]]
-        var audioNodes  = nodeListToArray(html.querySelectorAll("audio")),
+        var audioNodes  = query(html, "audio"),
             sourceLists = audioNodes
                 .map(function (aNode) {
-                    return nodeListToArray(aNode.querySelectorAll("source"));
+                    return query(aNode, "source");
                 })
                 .filter(function (arr) {
                     return arr.length > 0;
@@ -55,7 +50,7 @@ window.weirdPlayer.parse = (function (window) {
     var songLinkRe = new RegExp("^.*– (.+)$");  // Note the special dash!
 
     function parseSongTitleLinks(html) {
-        return nodeListToArray(html.querySelectorAll("p.audioTrack a"))
+        return query(html, "p.audioTrack a")
             .map(function (a) {
                 var text  = a.innerHTML,
                     match = songLinkRe.exec(text);

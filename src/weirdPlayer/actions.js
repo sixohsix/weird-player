@@ -3,27 +3,26 @@
     var exports = {},
 
         util = window.weirdPlayer.util,
-        coerce = util.coerce;
+        coerce = util.coerce,
+        append = util.append,
+        empty  = util.empty;
 
     function createActionChain() {
         var actions = [],
             running = false,
             ac      = {};
 
-        function pushAction(action) {
-            actions.push(action);
-        }
-
         function doActions(newActions) {
-            newActions.reverse().forEach(pushAction);
-            if (! running) doneAction();
+            append(actions, newActions.reverse());
+            doneAction();
         }
         ac.doActions = doActions;
 
         function doneAction() {
-            if (actions.length > 0) {
+            if (! empty(actions)) {
                 running = true;
                 var nextAction = actions.pop();
+                window.console.log("action: " + nextAction.name);
                 window.setTimeout(nextAction, 0);
             } else {
                 running = false;

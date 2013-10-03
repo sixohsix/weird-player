@@ -3,6 +3,12 @@
     var exports = {},
         log     = window.console.log,
 
+        util    = window.weirdPlayer.util,
+        query   = util.query,
+        empty   = util.empty,
+        append  = util.append,
+        defined = util.defined,
+
         actions   = window.weirdPlayer.actions,
         doNothing = actions.doNothing,
 
@@ -43,12 +49,8 @@
             ac = actions.createActionChain(),
             ec = actions.createEventCoordinator(),
 
-            wantsToPlay = false,
-            playing = false,
             currentSong = undefined,
-            upcomingSongs = [],
-            audioNode = undefined;
-
+            upcomingSongs = [];
 
         function loadRandomSongs() {  // Action
             var params = {
@@ -56,7 +58,7 @@
                 "page": "3"  // This should be random...
             };
             function okCallback(req) {
-                parse(getJson(req)).foreach(function (song) {
+                parse(getJson(req)).forEach(function (song) {
                     upcomingSongs.push(song);
                 });
                 ac.doneAction();
@@ -81,25 +83,19 @@
         }
 
         function queueNextSong() {  // Action
-            if (upcomingSongs.length > 0) {
+            if (empty(upcomingSongs)) {
+                ac.doActions([loadAtLeastOneSong, queueNextSong]);
+            } else {
                 currentSong = upcomingSongs.shift();
                 ec.notify("songChanged");
+                ac.doneAction();
             }
-            ac.doneAction();
         }
 
-        function setupAudioNode() {
-            var audioNode = document.createElement("audio"),
-                sourceNode = document.createElement("source");
-            sourceNode.src = currentSong.url;
-            audioNode.appendChild(sourceNode);
-            playerNode.appendChild(audioNode);
+        function skip() {
+            ac.doActions([queueNextSong]);
         }
-
-        function setup() {
-            ac.doActions([loadAtLeastOneSong, queueNextSong]);
-        }
-        w.setup = setup;
+        w.skip = skip;
 
         function getCurrentSong() {
             return currentSong;
@@ -112,14 +108,64 @@
     }
 
     function createWcpView(wcpModel, playerNode) {
+        var audioNode,
+            shouldAutoplay = false;
+
         wcpModel.observe("songChanged", function () {
             log("song changed, yo");
+            setupAudioNode();
         });
+
+        function setupAudioNode() {
+            if (defined(audioNode)) {
+                audioNode.pause();
+                audioNode.remove();
+            }
+            audioNode = document.createElement("audio");
+            wcpModel.getCurrentSong().sources.forEach(function (s) {
+                audioNode.appendChild(s);
+            });
+            playerNode.appendChild(audioNode);
+            audioNode.load();
+            if (shouldAutoplay) {
+                shouldAutoplay = false;
+                audioNode.play();
+            }
+        }
+
+        query(playerNode, ".wcp-play").forEach(function (node) {
+            node.onclick = function () {
+                if (defined(audioNode)) {
+                    audioNode.play();
+                }
+                return false;
+            };
+        });
+        query(playerNode, ".wcp-pause").forEach(function (node) {
+            node.onclick = function () {
+                if (defined(audioNode)) {
+                    audioNode.pause();
+                }
+                return false;
+            };
+        });
+        query(playerNode, ".wcp-skip").forEach(function (node) {
+            node.onclick = function () {
+                if (defined(audioNode)) {
+                    audioNode.pause();
+                }
+                shouldAutoplay = true;
+                wcpModel.skip();
+                return false;
+            };
+        });
+
+        playerNode.wcpModel = wcpModel;
+        wcpModel.skip();
     }
 
     function setup(playerNode, apiUrl) {
-        var weirdPlayer = createWeirdPlayer(playerNode, apiUrl);
-        weirdPlayer.setup();
+        createWcpView(createWcpModel(apiUrl), playerNode);
     }
     exports.setup = setup;
 
