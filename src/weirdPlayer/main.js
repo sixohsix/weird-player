@@ -1,41 +1,13 @@
-;window.weirdPlayer = window.weirdPlayer || {};
-(function (window) {
+;window.weirdPlayer.main = (function (window) {
     "use strict";
     var exports = {},
         log     = window.console.log,
 
-        parse   = window.weirdPlayer.parse.parse,
+        actions   = window.weirdPlayer.actions,
+        doNothing = actions.doNothing,
 
-        actions = [],
-        running = false;
+        parse = window.weirdPlayer.parse.parse;
 
-    function pushAction(action) {
-        actions.push(action);
-    }
-
-    function doActions(newActions) {
-        newActions.reverse().forEach(pushAction);
-        if (! running) doneAction();
-    }
-
-    function doneAction() {
-        if (actions.length > 0) {
-            running = true;
-            var nextAction = actions.pop();
-            nextAction();
-        } else {
-            running = false;
-        }
-    }
-
-    function asAction(f) {
-        return function () {
-            f.apply(undefined, arguments);
-            doneAction();
-        };
-    }
-
-    function doNothing() {}
 
     function wpApiParamStr(params) {
         var pStr = "?json=1";
@@ -56,69 +28,100 @@
         req.send();
     }
 
-    function loadRandomSong(weirdPlayer) {
-        var params = {
-            "count": "1",
-            "page": "3"
-        };
-        function okCallback(req) {
-            var jsonData;
-            if (req.responseType !== "json") {
-                jsonData = window.JSON.parse(req.responseText);
-            } else {
-                jsonData = req.response;
+    function getJson(req) {
+        var jsonData;
+        if (req.responseType !== "json") {
+            jsonData = window.JSON.parse(req.responseText);
+        } else {
+            jsonData = req.response;
+        }
+        return jsonData;
+    }
+
+    function createWcpModel(apiUrl) {
+        var w = {},
+            ac = actions.createActionChain(),
+            ec = actions.createEventCoordinator(),
+
+            wantsToPlay = false,
+            playing = false,
+            currentSong = undefined,
+            upcomingSongs = [],
+            audioNode = undefined;
+
+
+        function loadRandomSongs() {  // Action
+            var params = {
+                "count": "1",
+                "page": "3"  // This should be random...
+            };
+            function okCallback(req) {
+                parse(getJson(req)).foreach(function (song) {
+                    upcomingSongs.push(song);
+                });
+                ac.doneAction();
             }
-            weirdPlayer.currentSong = parse(jsonData);
+            function failCallback(req) {
+                log("The AJAX request failed, pal.");
+                ac.doneAction();
+            }
+            load(apiUrl, params, okCallback, failCallback);
         }
-        function failCallback(req) {
-            log("The AJAX request failed, pal.");
+
+        function loadAtLeastOneSong() {  // Action
+            var originalSongCount = upcomingSongs.length;
+            function keepLoadingUntilYouGotSomeSongs() {
+                var todo = [];
+                if (upcomingSongs.length === originalSongCount) {
+                    todo = [loadRandomSongs, keepLoadingUntilYouGotSomeSongs];
+                }
+                ac.doActions(todo);
+            }
+            ac.doActions([keepLoadingUntilYouGotSomeSongs]);
         }
-        load(
-            weirdPlayer.apiUrl,
-            params,
-            asAction(okCallback),
-            asAction(failCallback));
+
+        function queueNextSong() {  // Action
+            if (upcomingSongs.length > 0) {
+                currentSong = upcomingSongs.shift();
+                ec.notify("songChanged");
+            }
+            ac.doneAction();
+        }
+
+        function setupAudioNode() {
+            var audioNode = document.createElement("audio"),
+                sourceNode = document.createElement("source");
+            sourceNode.src = currentSong.url;
+            audioNode.appendChild(sourceNode);
+            playerNode.appendChild(audioNode);
+        }
+
+        function setup() {
+            ac.doActions([loadAtLeastOneSong, queueNextSong]);
+        }
+        w.setup = setup;
+
+        function getCurrentSong() {
+            return currentSong;
+        }
+        w.getCurrentSong = getCurrentSong;
+
+        w.observe = ec.observe;
+
+        return w;
     }
 
-    function setupAudioNode(weirdPlayer) {
-        var audioNode = document.createElement("audio"),
-            sourceNode = document.createElement("source");
-        sourceNode.src = weirdPlayer.currentSong.url;
-        audioNode.appendChild(sourceNode);
-        weirdPlayer.playerNode.appendChild(audioNode);
-        audioNode.play();
+    function createWcpView(wcpModel, playerNode) {
+        wcpModel.observe("songChanged", function () {
+            log("song changed, yo");
+        });
     }
 
-    function play(weirdPlayer) {
-        if (weirdPlayer.playing) return false;
-
-        doActions([
-            loadRandomSong.bind(undefined, weirdPlayer),
-            asAction(setupAudioNode).bind(undefined, weirdPlayer)
-        ]);
-        return false;
-    }
-
-    function setupPlayerNode(weirdPlayer) {
-        var node = weirdPlayer.playerNode;
-        node.querySelector(".wcp-play").onclick =
-            play.bind(undefined, weirdPlayer);
-    }
-
-    function createWeirdPlayer(playerNode, apiUrl) {
-        return {
-            "playerNode": playerNode,
-            "apiUrl": apiUrl,
-            "playing": false,
-            "currentSong": undefined,
-            "audioNode": undefined
-        };
-    }
     function setup(playerNode, apiUrl) {
         var weirdPlayer = createWeirdPlayer(playerNode, apiUrl);
-        setupPlayerNode(weirdPlayer);
+        weirdPlayer.setup();
     }
     exports.setup = setup;
 
-    window.weirdPlayer.main = exports;
+    return exports;
 })(window);
