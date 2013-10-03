@@ -2,6 +2,7 @@
 window.weirdPlayer.parse = (function (window) {
     "use strict";
     var exports = {},
+        RegExp  = window.RegExp,
         util    = window.weirdPlayer.util,
         defined = util.defined;
 
@@ -24,8 +25,8 @@ window.weirdPlayer.parse = (function (window) {
     }
     exports.htmlContent = htmlContent;
 
-    function parseAudioNodes(contentNode) { // HTMLElement -> [[AudioSourceNode]]
-        var audioNodes  = nodeListToArray(contentNode.querySelectorAll("audio")),
+    function parseAudioNodes(html) { // HTMLElement -> [[AudioSourceNode]]
+        var audioNodes  = nodeListToArray(html.querySelectorAll("audio")),
             sourceLists = audioNodes
                 .map(function (aNode) {
                     return nodeListToArray(aNode.querySelectorAll("source"));
@@ -37,7 +38,7 @@ window.weirdPlayer.parse = (function (window) {
     }
     exports.parseAudioNodes = parseAudioNodes;
 
-    var titleRe = new window.RegExp("^New Canadiana :: (.+) &#8211; (.+)$");
+    var titleRe = new RegExp("^New Canadiana :: (.+) &#8211; (.+)$");
 
     function parseArtistData(post) { // WpPost -> {artist, release}|undefined
         if (! defined(post.title)) return undefined;
@@ -50,6 +51,19 @@ window.weirdPlayer.parse = (function (window) {
         return {artist: match[1], release: match[2]};
     };
     exports.parseArtistData = parseArtistData;
+
+    var songLinkRe = new RegExp("^.*– (.+)$");  // Note the special dash!
+
+    function parseSongTitleLinks(html) {
+        return nodeListToArray(html.querySelectorAll("p.audioTrack a"))
+            .map(function (a) {
+                var text  = a.innerHTML,
+                    match = songLinkRe.exec(text);
+                if (match === null) return undefined;
+                return match[1];
+            }).filter(defined);
+    };
+    exports.parseSongTitleLinks = parseSongTitleLinks;
 
     return exports;
 })(window);
