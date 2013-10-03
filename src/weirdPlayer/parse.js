@@ -62,8 +62,15 @@ window.weirdPlayer.parse = (function (window) {
                 if (match === null) return undefined;
                 return match[1];
             }).filter(defined);
-    };
+    }
     exports.parseSongTitleLinks = parseSongTitleLinks;
+
+    function parseImage(html) {
+        var img = html.querySelector("img");
+        if (img === null) return undefined;
+        return img;
+    }
+    exports.parseImage = parseImage;
 
     return exports;
 })(window);

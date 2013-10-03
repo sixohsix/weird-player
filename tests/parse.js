@@ -19,12 +19,12 @@
         ok(fixture !== undefined, "I can see the fixture");
     });
 
-    test("parse html from a json response", function () {
+    test("parse html from a html", function () {
         var html = parse.htmlContent(post);
         ok(defined(html), "html defined");
     });
 
-    test("parse audio nodes from json response", function () {
+    test("parse audio nodes from html", function () {
         var sourceLists = parse.parseAudioNodes(html);
         eq(sourceLists.length, 2, "two nodes were parsed");
         eq(sourceLists[1][1].src, "http://weirdcanada.com/binary/Weird_Canada-Nouveau_Zodiaque-Combustible.mp3",
@@ -44,6 +44,14 @@
     test("parse song names from audio track links", function () {
         var songTitles = parse.parseSongTitleLinks(html);
         eq(songTitles.length, 2, "found two songs");
+        eq(songTitles[0], "Au Parc Jarry");
+        eq(songTitles[1], "Combustible");
+    });
+
+    test("parse release image from html", function () {
+        var imageNode = parse.parseImage(html);
+        ok(defined(imageNode), "image node came out");
+        eq(imageNode.src, "http://weirdcanada.com/wp-content/uploads/2013/09/Nouveau_Zodiaque-web-300x300.jpg");
     });
 
 })(window);
