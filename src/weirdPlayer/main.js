@@ -1,7 +1,6 @@
 ;window.weirdPlayer.main = (function (window) {
     "use strict";
     var exports = {},
-        log     = window.console.log,
 
         util    = window.weirdPlayer.util,
         query   = util.query,
@@ -9,10 +8,14 @@
         append  = util.append,
         defined = util.defined,
         attr    = util.attr,
+        coerce  = util.coerce,
+        choose  = util.choose,
+        log     = util.log,
 
         actions   = window.weirdPlayer.actions,
 
-        createLoader = window.weirdPlayer.loader.createLoader;
+        createLoader     = window.weirdPlayer.loader.createLoader,
+        createTestLoader = window.weirdPlayer.loader.createTestLoader;
 
     function createWcpModel(loader) {
         var w = {},
@@ -22,26 +25,26 @@
             currentSong = undefined,
             upcomingSongs = [];
 
-        function loadRandomSongs() {  // Action
+        function loadRandomSong() {  // Action
             loader.loadSongs(function (songs) {
-                append(upcomingSongs, songs);
+                if (! empty(songs)) upcomingSongs.push(choose(songs));
                 ac.doneAction();
             });
         }
 
         function loadAtLeastOneSong() {  // Action
             var originalSongCount = upcomingSongs.length;
-            function keepLoadingUntilYouGotSomeSongs() {
+            function keepLoadingUntilYouGotASong() {
                 if (upcomingSongs.length === originalSongCount) {
                     ac.doActions([
-                        loadRandomSongs,
-                        keepLoadingUntilYouGotSomeSongs]);
+                        loadRandomSong,
+                        keepLoadingUntilYouGotASong]);
                 } else {
                     ec.notify("gotNewSongs");
                     ac.doneAction();
                 }
             }
-            ac.doActions([keepLoadingUntilYouGotSomeSongs]);
+            ac.doActions([keepLoadingUntilYouGotASong]);
         }
 
         function queueNextSong() {  // Action
@@ -190,8 +193,18 @@
         window.setInterval(updateSongProgress, 500);
     }
 
-    function setup(playerNode, apiUrl) {
-        var loader = createLoader(apiUrl),
+    function setup(playerNode, options) {
+        var apiUrl        = options.apiUrl,
+            debug         = attr(options, "debug", false),
+            useTestLoader = attr(options, "useTestLoader", false);
+
+        util.debug = debug;
+
+        var loader =
+                useTestLoader
+                ? createTestLoader(window.tests.fixture.responses)
+                : createLoader(apiUrl),
+
             model  = createWcpModel(loader),
             view   = createWcpView(model, playerNode);
         return view;

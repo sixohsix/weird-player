@@ -4,7 +4,14 @@
         RegExp  = window.RegExp,
         util    = window.weirdPlayer.util,
         defined = util.defined,
-        query   = util.query;
+        query   = util.query,
+        empty   = util.empty,
+        log     = util.log;
+
+    function parseFail(msg, failV) {
+        log("parseFail: " + msg);
+        return failV;
+    }
 
     function singlePost(jsonResponse) {
         return jsonResponse.posts[0];
@@ -28,6 +35,8 @@
                 .filter(function (arr) {
                     return arr.length > 0;
                 });
+        if (empty(sourceLists))
+            return parseFail("no audio source nodes found", []);
         return sourceLists;
     }
     exports.parseAudioNodes = parseAudioNodes;
@@ -35,12 +44,14 @@
     var titleRe = new RegExp("^New Canadiana :: (.+) &#8211; (.+)$");
 
     function parseArtistData(post) { // WpPost -> {artist, release}|undefined
-        if (! defined(post.title)) return undefined;
+        if (! defined(post.title))
+            return parseFail("missing post title");
 
         var title = post.title,
             match = titleRe.exec(title);
 
-        if (match === null) return undefined;
+        if (match === null)
+            return parseFail("title match failed: " + post.title);
 
         return {artist: match[1], release: match[2]};
     };
@@ -60,9 +71,12 @@
     exports.parseSongTitleLinks = parseSongTitleLinks;
 
     function parseImage(html) {
-        var img = html.querySelector("img");
-        if (img === null) return undefined;
-        return img;
+        var img = html.querySelector("img"),
+            newImg = document.createElement("img");
+        if (img !== null) {
+            newImg.src = img.src;
+        }
+        return newImg;
     }
     exports.parseImage = parseImage;
 
@@ -72,8 +86,10 @@
     exports.parsePostUrl = parsePostUrl;
 
     function parse(jsonResponse) { // WpJsonResponse -> [{artist, release, image, sources, title, postUrl}]
-        var post = singlePost(jsonResponse),
-            html = htmlContent(post),
+        var post = singlePost(jsonResponse);
+        if (! defined(post)) return [];
+
+        var html = htmlContent(post),
             artistData = parseArtistData(post),
             sourceLists = parseAudioNodes(html),
             songTitles = parseSongTitleLinks(html),

@@ -5,7 +5,8 @@
         util = window.weirdPlayer.util,
         coerce = util.coerce,
         append = util.append,
-        empty  = util.empty;
+        empty  = util.empty,
+        log    = util.log;
 
     function createActionChain() {
         var actions = [],
@@ -22,7 +23,7 @@
             if (! empty(actions)) {
                 running = true;
                 var nextAction = actions.pop();
-                window.console.log("action: " + nextAction.name);
+                log("action: " + nextAction.name);
                 window.setTimeout(nextAction, 0);
             } else {
                 running = false;

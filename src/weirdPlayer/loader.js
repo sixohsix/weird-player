@@ -1,10 +1,13 @@
 ;window.weirdPlayer.loader = (function (window) {
     var exports = {},
-        doNothing = window.weirdPlayer.util.doNothing,
+        util      = window.weirdPlayer.util,
+        doNothing = util.doNothing,
+        attr      = util.attr,
+
         parse     = window.weirdPlayer.parse.parse;
 
     function wpApiParamStr(params) {
-        var pStr = "?json=1";
+        var pStr = "?json=get_recent_posts";
         for (var key in params) {
             // yup, this seems safe...
             pStr += "&" + key + "=" + params[key];
@@ -32,16 +35,18 @@
         return jsonData;
     }
 
-    function createLoader(apiUrl) {
+    function createLoader(options) {
         var l = {};
 
-        apiUrl = apiUrl || "/api";
+        var apiUrl = attr(options, "apiUrl", "/category/content/newcanadiana/"),
+            pages  = attr(options, "pages", 905);
 
         function loadSongs(callback) {
-            var params = {
-                "count": "1",
-                "page": "3"  // This should be random...
-            };
+            var page = (Math.random() * pages)|0,
+                params = {
+                    count: "1",
+                    page:  "" + page
+                };
             function okCallback(req) {
                 callback(parse(getJson(req)));
             }
@@ -61,14 +66,15 @@
             idx = 0;
 
         function loadSongs(callback) {
-            var fakeResponse = fixtureData[idx];
+            var songs = parse(fixtureData[idx]);
             idx = (idx + 1) % fixtureData.length;
-            window.setTimeout(callback.bind(undefined, fakeResponse), 0);
+            window.setTimeout(callback.bind(undefined, songs), 0);
         }
         l.loadSongs = loadSongs;
 
         return l;
     }
+    exports.createTestLoader = createTestLoader;
 
     return exports;
 })(window);

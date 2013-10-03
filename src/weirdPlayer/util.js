@@ -1,6 +1,14 @@
 ;window.weirdPlayer = window.weirdPlayer || {};
 window.weirdPlayer.util = (function (window) {
-    var exports = {};
+    var exports     = {},
+        actuallyLog = window.console.log.bind(window.console);
+
+    exports.debug = false; // true;
+
+    function log(msg) {
+        if (exports.debug) actuallyLog(msg);
+    }
+    exports.log = log;
 
     function defined(v) {
         return v !== undefined;
@@ -24,7 +32,7 @@ window.weirdPlayer.util = (function (window) {
 
     function nodeListToArray(nl) { // NodeList -> Array
         var arr = [];
-        for (var n of nl) arr.push(n);
+        for (var i = 0; i < nl.length; i++) arr.push(nl[i]);
         return arr;
     }
 
@@ -42,6 +50,11 @@ window.weirdPlayer.util = (function (window) {
         arr1.forEach(function (el) { arr0.push(el); });
     }
     exports.append = append;
+
+    function choose(arr) {
+        return arr[(Math.random() * arr.length)|0];
+    }
+    exports.choose = choose;
 
     return exports;
 })(window);

@@ -5,6 +5,8 @@
   <script src="js/weirdPlayer/actions.js"></script>
   <script src="js/weirdPlayer/parse.js"></script>
   <script src="js/weirdPlayer/loader.js"></script>
+
+  <script src="tests/fixture.js"></script>
   <script src="js/weirdPlayer/main.js"></script>
 </head>
 <body>
@@ -32,7 +34,7 @@
   <script>
     window.weirdPlayer.main.setup(
       document.querySelector("#weirdPlayer"),
-      "/test.json");
+      {useTestLoader: true});
   </script>
 </body>
 </html>
