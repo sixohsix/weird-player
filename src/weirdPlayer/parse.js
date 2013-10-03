@@ -1,5 +1,4 @@
-;window.weirdPlayer = window.weirdPlayer || {};
-window.weirdPlayer.parse = (function (window) {
+;window.weirdPlayer.parse = (function (window) {
     "use strict";
     var exports = {},
         RegExp  = window.RegExp,

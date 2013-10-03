@@ -8,10 +8,19 @@ window.weirdPlayer.util = (function (window) {
     exports.defined = defined;
 
     function coerce(v, d) {
-        if (defined(v)) return v;
-        else return d;
+        return defined(v) ?  v : d;
     }
     exports.coerce = coerce;
+
+    function maybe(m, f, d) {
+        return defined(m) ? f(m) : d;
+    }
+    exports.maybe = maybe;
+
+    function attr(o, an, d) {
+        return defined(o) ? o[an] : d;
+    }
+    exports.attr = attr;
 
     function nodeListToArray(nl) { // NodeList -> Array
         var arr = [];

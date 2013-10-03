@@ -8,43 +8,13 @@
         empty   = util.empty,
         append  = util.append,
         defined = util.defined,
+        attr    = util.attr,
 
         actions   = window.weirdPlayer.actions,
-        doNothing = actions.doNothing,
 
-        parse = window.weirdPlayer.parse.parse;
+        createLoader = window.weirdPlayer.loader.createLoader;
 
-
-    function wpApiParamStr(params) {
-        var pStr = "?json=1";
-        for (var key in params) {
-            // yup, this seems safe...
-            pStr += "&" + key + "=" + params[key];
-        }
-        return pStr;
-    }
-
-    function load(apiUrl, params, okCallback, errCallback) {
-        var pStr = wpApiParamStr(params),
-            req = new window.XMLHttpRequest();
-        errCallback = errCallback || doNothing;
-        req.onload  = okCallback .bind(undefined, req);
-        req.onerror = errCallback.bind(undefined, req);
-        req.open("GET", apiUrl + pStr);
-        req.send();
-    }
-
-    function getJson(req) {
-        var jsonData;
-        if (req.responseType !== "json") {
-            jsonData = window.JSON.parse(req.responseText);
-        } else {
-            jsonData = req.response;
-        }
-        return jsonData;
-    }
-
-    function createWcpModel(apiUrl) {
+    function createWcpModel(loader) {
         var w = {},
             ac = actions.createActionChain(),
             ec = actions.createEventCoordinator(),
@@ -53,31 +23,23 @@
             upcomingSongs = [];
 
         function loadRandomSongs() {  // Action
-            var params = {
-                "count": "1",
-                "page": "3"  // This should be random...
-            };
-            function okCallback(req) {
-                parse(getJson(req)).forEach(function (song) {
-                    upcomingSongs.push(song);
-                });
+            loader.loadSongs(function (songs) {
+                append(upcomingSongs, songs);
                 ac.doneAction();
-            }
-            function failCallback(req) {
-                log("The AJAX request failed, pal.");
-                ac.doneAction();
-            }
-            load(apiUrl, params, okCallback, failCallback);
+            });
         }
 
         function loadAtLeastOneSong() {  // Action
             var originalSongCount = upcomingSongs.length;
             function keepLoadingUntilYouGotSomeSongs() {
-                var todo = [];
                 if (upcomingSongs.length === originalSongCount) {
-                    todo = [loadRandomSongs, keepLoadingUntilYouGotSomeSongs];
+                    ac.doActions([
+                        loadRandomSongs,
+                        keepLoadingUntilYouGotSomeSongs]);
+                } else {
+                    ec.notify("gotNewSongs");
+                    ac.doneAction();
                 }
-                ac.doActions(todo);
             }
             ac.doActions([keepLoadingUntilYouGotSomeSongs]);
         }
@@ -88,7 +50,11 @@
             } else {
                 currentSong = upcomingSongs.shift();
                 ec.notify("songChanged");
-                ac.doneAction();
+                if (empty(upcomingSongs)) {
+                    ac.doActions([loadAtLeastOneSong]);
+                } else {
+                    ac.doneAction();
+                }
             }
         }
 
@@ -107,30 +73,68 @@
         return w;
     }
 
+    function setSongData(playerNode, song) {
+        function setInnerHTML(sel, value) {
+            query(playerNode, sel).forEach(function (node) {
+                node.innerHTML = value;
+            });
+        }
+        setInnerHTML(".wcp-artist", song.artist);
+        setInnerHTML(".wcp-title", song.title);
+        setInnerHTML(".wcp-release", song.release);
+        query(playerNode, ".wcp-postUrl").forEach(function (node) {
+            node.href = song.postUrl; });
+        query(playerNode, ".wcp-img").forEach(function (node) {
+            query(node, "img").forEach(function (n) { n.remove(); });
+            node.appendChild(song.image);
+        });
+    }
+
+    function loadedAudioNode(sources) {
+        var audioNode = document.createElement("audio");
+        sources.forEach(function (s) {
+            audioNode.appendChild(s);
+        });
+        audioNode.load();
+        return audioNode;
+    }
+
+    function fmtTime(time) {
+        var mins = (time / 60)|0,
+            secs = (time % 60)|0;
+        if (secs < 10) secs = "0" + secs;
+        return "" + mins + ":" + secs;
+    }
+
     function createWcpView(wcpModel, playerNode) {
         var audioNode,
-            shouldAutoplay = false;
+            shouldAutoplay = false,
+            waitingOnSkip  = false,
+
+            progressBars   = query(playerNode, ".wcp-progress"),
+            curTimeNodes   = query(playerNode, ".wcp-curTime"),
+            totTimeNodes   = query(playerNode, ".wcp-totTime");
 
         wcpModel.observe("songChanged", function () {
             log("song changed, yo");
-            setupAudioNode();
+            var song = wcpModel.getCurrentSong();
+            setupAudioNode(song.sources);
+            setSongData(playerNode, song);
+            updateSongProgress();
         });
 
-        function setupAudioNode() {
+        function setupAudioNode(sources) {
             if (defined(audioNode)) {
                 audioNode.pause();
                 audioNode.remove();
             }
-            audioNode = document.createElement("audio");
-            wcpModel.getCurrentSong().sources.forEach(function (s) {
-                audioNode.appendChild(s);
-            });
+            audioNode = loadedAudioNode(sources);
             playerNode.appendChild(audioNode);
-            audioNode.load();
             if (shouldAutoplay) {
                 shouldAutoplay = false;
                 audioNode.play();
             }
+            waitingOnSkip = false;
         }
 
         query(playerNode, ".wcp-play").forEach(function (node) {
@@ -160,12 +164,37 @@
             };
         });
 
+        function updateSongProgress() {
+            var totTime = attr(audioNode, "duration", 0)|0,
+                curTime = attr(audioNode, "currentTime", 0)|0,
+                ended   = attr(audioNode, "ended", false);
+            progressBars.forEach(function (n) {
+                n.max   = totTime;
+                n.value = curTime;
+            });
+            curTimeNodes.forEach(function (n) {
+                n.innerHTML = fmtTime(curTime);
+            });
+            totTimeNodes.forEach(function (n) {
+                n.innerHTML = fmtTime(totTime);
+            });
+            if (ended && ! waitingOnSkip) {
+                waitingOnSkip = true;
+                shouldAutoplay = true;
+                wcpModel.skip();
+            }
+        }
+
         playerNode.wcpModel = wcpModel;
         wcpModel.skip();
+        window.setInterval(updateSongProgress, 500);
     }
 
     function setup(playerNode, apiUrl) {
-        createWcpView(createWcpModel(apiUrl), playerNode);
+        var loader = createLoader(apiUrl),
+            model  = createWcpModel(loader),
+            view   = createWcpView(model, playerNode);
+        return view;
     }
     exports.setup = setup;
 

@@ -4,10 +4,27 @@
   <script src="js/weirdPlayer/util.js"></script>
   <script src="js/weirdPlayer/actions.js"></script>
   <script src="js/weirdPlayer/parse.js"></script>
+  <script src="js/weirdPlayer/loader.js"></script>
   <script src="js/weirdPlayer/main.js"></script>
 </head>
 <body>
   <div id="weirdPlayer">
+    <div class="wcp-img"></div>
+    <div>
+      Now Playing:
+      <a class="wcp-postUrl" href="#">
+        <span class="wcp-artist"></span>
+        -
+        <span class="wcp-title"></span>
+        from
+        <span class="wcp-release"></span>
+      </a>
+    </div>
+    <progress class="wcp-progress" min="0"></progress>
+    <div>
+      <span class="wcp-curTime"></span>
+      /
+      <span class="wcp-totTime"></span>
     <a href="#" class="wcp-play">Play</a>
     <a href="#" class="wcp-pause">Pause</a>
     <a href="#" class="wcp-skip">Skip</a>
