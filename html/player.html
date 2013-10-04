@@ -5,6 +5,7 @@
   <script src="js/weirdPlayer/actions.js"></script>
   <script src="js/weirdPlayer/parse.js"></script>
   <script src="js/weirdPlayer/loader.js"></script>
+  <script src="js/weirdPlayer/translate.js"></script>
 
   <script src="tests/fixture.js"></script>
   <script src="js/weirdPlayer/main.js"></script>
@@ -13,12 +14,12 @@
   <div id="weirdPlayer">
     <div class="wcp-img"></div>
     <div>
-      Now Playing:
+      <span class="tr">Now playing:</span>
       <a class="wcp-postUrl" href="#">
         <span class="wcp-artist"></span>
         -
         <span class="wcp-title"></span>
-        from
+        <span class="tr">from</span>
         <span class="wcp-release"></span>
       </a>
     </div>
@@ -27,15 +28,16 @@
       <span class="wcp-curTime"></span>
       /
       <span class="wcp-totTime"></span>
-    <a href="#" class="wcp-play">Play</a>
-    <a href="#" class="wcp-pause">Pause</a>
-    <a href="#" class="wcp-skip">Skip</a>
+    <a href="#" class="wcp-play tr">Play</a>
+    <a href="#" class="wcp-pause tr">Pause</a>
+    <a href="#" class="wcp-skip tr">Next</a>
   </div>
   <script>
     window.weirdPlayer.main.setup(
       document.querySelector("#weirdPlayer"),
       {apiUrl: "http://weirdcanada.com/category/content/newcanadiana/",
-       jsonp: true});
+       jsonp: true,
+       debug: true});
   </script>
 </body>
 </html>

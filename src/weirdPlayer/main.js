@@ -12,10 +12,15 @@
         choose  = util.choose,
         log     = util.log,
 
-        actions   = window.weirdPlayer.actions,
+        actions = window.weirdPlayer.actions,
 
         createLoader     = window.weirdPlayer.loader.createLoader,
-        createTestLoader = window.weirdPlayer.loader.createTestLoader;
+        createTestLoader = window.weirdPlayer.loader.createTestLoader,
+
+        translate_         = window.weirdPlayer.translate,
+        createTranslator   = translate_.createTranslator,
+        translations       = translate_.translations,
+        getBrowserLanguage = translate_.getBrowserLanguage;
 
     function createWcpModel(loader) {
         var w = {},
@@ -188,7 +193,6 @@
             }
         }
 
-        playerNode.wcpModel = wcpModel;
         wcpModel.skip();
         window.setInterval(updateSongProgress, 500);
     }
@@ -205,7 +209,14 @@
                 : createLoader({apiUrl: options.apiUrl, jsonp: options.jsonp}),
 
             model  = createWcpModel(loader),
-            view   = createWcpView(model, playerNode);
+            view   = createWcpView(model, playerNode),
+            translator = createTranslator(translations, playerNode);
+
+        translator.setLang(getBrowserLanguage());
+
+        playerNode.wcpModel = model;
+        playerNode.wcpView  = view;
+        playerNode.wcpTranslator = translator;
         return view;
     }
     exports.setup = setup;
