@@ -93,7 +93,7 @@
         query(playerNode, ".wcp-postUrl").forEach(function (node) {
             node.href = song.postUrl; });
         query(playerNode, ".wcp-img").forEach(function (node) {
-            query(node, "img").forEach(function (n) { node.removeChild(n); });
+            node.innerHTML = "";
             node.appendChild(song.image);
         });
     }
@@ -147,7 +147,7 @@
 
         query(playerNode, ".wcp-play").forEach(function (node) {
             node.onclick = function () {
-                if (defined(audioNode)) {
+                if (defined(audioNode) && audioNode.paused) {
                     audioNode.play();
                 }
                 return false;
@@ -155,7 +155,7 @@
         });
         query(playerNode, ".wcp-pause").forEach(function (node) {
             node.onclick = function () {
-                if (defined(audioNode)) {
+                if (defined(audioNode) && ! audioNode.paused) {
                     audioNode.pause();
                 }
                 return false;
@@ -168,6 +168,16 @@
                 }
                 shouldAutoplay = true;
                 wcpModel.skip();
+                return false;
+            };
+        });
+        query(playerNode, ".wcp-playPause").forEach(function (node) {
+            node.onclick = function () {
+                if (defined(audioNode)) {
+                    audioNode.paused
+                        ? audioNode.play()
+                        : audioNode.pause();
+                }
                 return false;
             };
         });

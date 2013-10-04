@@ -1,6 +1,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
+  <link rel="stylesheet" type="text/css" href="player.css"></link>
   <script src="js/weirdPlayer/util.js"></script>
   <script src="js/weirdPlayer/actions.js"></script>
   <script src="js/weirdPlayer/parse.js"></script>
@@ -12,25 +13,32 @@
 </head>
 <body>
   <div id="weirdPlayer">
-    <div class="wcp-img"></div>
-    <div>
-      <span class="tr">Now playing:</span>
+    <div class="imgContainer">
+      <a href="#" class="wcp-playPause"><div class="wcp-img"><div class="loadImg">⌚</div></div></a>
+    </div><!--
+ --><div class="songDataContainer">
+      <span class="tr nowPlaying">Now playing:</span>
       <a class="wcp-postUrl" href="#">
-        <span class="wcp-artist"></span>
-        -
-        <span class="wcp-title"></span>
-        <span class="tr">from</span>
-        <span class="wcp-release"></span>
+        <span class="artistAndTitle">
+          <span class="wcp-artist">Loading...</span>
+          -
+          <span class="wcp-title"></span>
+        </span>
+        <span class="tr from">from</span>
+        <span class="wcp-release release">Loading...</span>
       </a>
+      <progress class="wcp-progress songProgress" min="0"></progress>
+      <div class="controls">
+        <div class="time">
+          <span class="wcp-curTime curTime">0:00</span>
+          <span class="totTime">/
+            <span class="wcp-totTime">0:00</span>
+          </span>
+        </div>
+        <a href="#" class="wcp-playPause tr ppText">Play/Pause</a>
+        <a href="#" class="wcp-skip tr next">Next song</a>
+      </div>
     </div>
-    <progress class="wcp-progress" min="0"></progress>
-    <div>
-      <span class="wcp-curTime"></span>
-      /
-      <span class="wcp-totTime"></span>
-    <a href="#" class="wcp-play tr">Play</a>
-    <a href="#" class="wcp-pause tr">Pause</a>
-    <a href="#" class="wcp-skip tr">Next</a>
   </div>
   <script>
     window.weirdPlayer.main.setup(
