@@ -35,8 +35,7 @@
                 })
                 .filter(function (arr) {
                     return arr.length > 0;
-                })
-                .reverse();
+                });
         if (empty(sourceLists))
             return parseFail("no audio source nodes found", []);
         return sourceLists;
