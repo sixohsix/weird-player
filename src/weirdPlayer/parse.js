@@ -42,7 +42,8 @@
     }
     exports.parseAudioNodes = parseAudioNodes;
 
-    var titleRe = new RegExp("^New Canadiana :: (.+) &#8211; (.+)$");
+    var titleRe  = new RegExp("^New Canadiana :: (.+) &#8211; (.+)$"),
+        titleRe2 = new RegExp("^Review :: (.+) &#8211; (.+)$");
 
     function parseArtistData(post) { // WpPost -> {artist, release}|undefined
         if (! defined(post.title))
@@ -50,7 +51,8 @@
 
         var title = post.title,
             match = titleRe.exec(title);
-
+        if (match === null)
+            match = titleRe2.exec(title);
         if (match === null)
             return parseFail("title match failed: " + post.title);
 

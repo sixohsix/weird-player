@@ -11,11 +11,11 @@
         en: {},
         fr: {"Now playing:": "Joue maintenant:",
              "Play/Pause": "Commence/Pause",
-             "Next&nbsp;song": "Prochaine&nbsp;chanson",
+             "Next song": "Prochaine chanson",
              "Visit Weird Canada": "Visitez Weird-Canada"},
         de: {"Now playing:": "Jetzt spielt:",
              "Play/Pause": "Spiel/Halt",
-             "Next&nbsp;song": "Nächste&nbsp;Lied",
+             "Next song": "Nächste Lied",
              "Visit Weird Canada": "Checken Sie Weird-Canada aus"}
     };
     exports.translations = translations;
@@ -29,7 +29,15 @@
             if (! defined(trans[origHTML]))
                 log("missing " + targetLang + " translation for '"
                     + origHTML + "'");
-            node.innerHTML = attr(trans, origHTML, origHTML);
+        });
+        query(rootNode, ".trt").forEach(function (node) {
+            var origTitle
+                    = node.tr_origTitle
+                    = attr(node, "tr_origTitle", node.title);
+            if (! defined(trans[origTitle]))
+                log("missing " + targetLang + " translation for '"
+                    + origTitle + "'");
+            node.title = attr(trans, origTitle, origTitle);
         });
     }
     exports.translate = translate;

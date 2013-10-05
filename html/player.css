@@ -37,6 +37,13 @@ background-color: rgb(255, 0, 255);
 img {
 border: 0;
 }
+.icon {
+width: 50px;
+height: 50px;
+padding-left: 20px;
+display: inline-block;
+vertical-align: top;
+}
 #weirdPlayer {
 display: block;
 border-bottom: 80px solid rgb(105, 105, 105);
@@ -80,13 +87,10 @@ font-size: 1.4em;
 display: inline-block;
 }
 .curTime {
-font-size: 1.1em;
+font-size: 1.4em;
 }
 .totTime {
-font-size: 0.8em;
-}
-.next {
-font-size: 0.8em;
+font-size: 1em;
 }
 .loadImg {
 font-size: 75px;
@@ -102,7 +106,7 @@ width: 100%;
 .languages {
 list-style: none;
 margin: 0;
-margin-top: 60px;
+margin-top: 40px;
 font-size: 0.8em;
 }
 .languages li {

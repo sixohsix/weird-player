@@ -156,6 +156,7 @@
                 if (defined(audioNode) && audioNode.paused) {
                     audioNode.play();
                 }
+                updateSongProgress();
                 return false;
             };
         });
@@ -164,6 +165,7 @@
                 if (defined(audioNode) && ! audioNode.paused) {
                     audioNode.pause();
                 }
+                updateSongProgress();
                 return false;
             };
         });
@@ -174,6 +176,7 @@
                 }
                 shouldAutoplay = true;
                 wcpModel.skip();
+                updateSongProgress();
                 return false;
             };
         });
@@ -184,14 +187,30 @@
                         ? audioNode.play()
                         : audioNode.pause();
                 }
+                updateSongProgress();
                 return false;
             };
         });
 
+        function hide(selector) {
+            query(playerNode, selector).forEach(function (node) {
+                node.wcp_origDisplay = node.style.display;
+                node.style.display = "none";
+            });
+        };
+        function show(selector) {
+            query(playerNode, selector).forEach(function (node) {
+                node.style.display = attr(node, "wcp_origDisplay", node.style.display);
+            });
+        };
+
+        var interfaceShowsPaused = false;
+
         function updateSongProgress() {
             var totTime = attr(audioNode, "duration", 0)|0,
                 curTime = attr(audioNode, "currentTime", 0)|0,
-                ended   = attr(audioNode, "ended", false);
+                ended   = attr(audioNode, "ended", false),
+                paused  = attr(audioNode, "paused", false);
             progressBars.forEach(function (n) {
                 n.max   = totTime;
                 n.value = curTime;
@@ -202,6 +221,15 @@
             totTimeNodes.forEach(function (n) {
                 n.innerHTML = fmtTime(totTime);
             });
+            if (paused && ! interfaceShowsPaused) {
+                interfaceShowsPaused = true;
+                hide(".wcp-iconPlaying");
+                show(".wcp-iconPaused");
+            } else if (! paused && interfaceShowsPaused) {
+                interfaceShowsPaused = false;
+                hide(".wcp-iconPaused");
+                show(".wcp-iconPlaying");
+            }
             if (ended && ! waitingOnSkip) {
                 waitingOnSkip = true;
                 shouldAutoplay = true;
@@ -209,6 +237,7 @@
             }
         }
 
+        hide(".wcp-iconPaused");
         wcpModel.skip();
         window.setInterval(updateSongProgress, 1000);
     }
