@@ -1,34 +1,59 @@
 <html>
 <head>
+  <title>Weird Canada Player</title>
   <meta charset="UTF-8">
-  <script src="wcptest.js"></script>
+  <meta name="viewport"
+      content="user-scalable=no,width=device-width" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <link rel="apple-touch-icon" href="wclogo.jpg" />
+  <link rel="stylesheet" type="text/css" href="player.css"></link>
+  <script src="wcp.js"></script>
 </head>
 <body>
+  <h1>Weird Canada Player</h1>
   <div id="weirdPlayer">
-    <div class="wcp-img"></div>
-    <div>
-      Now Playing:
-      <a class="wcp-postUrl" href="#">
-        <span class="wcp-artist"></span>
-        -
-        <span class="wcp-title"></span>
-        from
-        <span class="wcp-release"></span>
-      </a>
+    <div class="imgContainer">
+      <a href="#" class="wcp-playPause"><div class="wcp-img"><div class="loadImg">...</div></div></a>
+    </div><!--
+ --><div class="songDataContainer">
+      <div class="songMeta">
+        <span class="tr nowPlaying">Now playing:</span>
+        <a class="wcp-postUrl" href="#">
+          <span class="artistAndTitle">
+            <span class="wcp-artist">Loading...</span>
+            -&nbsp;<span class="wcp-title"></span>
+          </span>
+          <span class="tr from">from</span>
+          <span class="wcp-release release">Loading...</span>
+        </a>
+      </div>
+      <progress class="wcp-progress songProgress" min="0"></progress>
+      <div class="controls">
+        <div class="time">
+          <span class="wcp-curTime curTime">0:00</span>
+          <span class="totTime">/
+            <span class="wcp-totTime">0:00</span>
+          </span>
+        </div>
+        <a href="#" class="wcp-playPause tr ppText">Play/Pause</a>
+        <a href="#" class="wcp-skip tr next">Next&nbsp;song</a>
+      </div>
+      <ul class="languages">
+        <li><a href="#" class="setLang-en">English</a>
+        <li><a href="#" class="setLang-fr">français</a>
+      </ul>
     </div>
-    <progress class="wcp-progress" min="0"></progress>
-    <div>
-      <span class="wcp-curTime"></span>
-      /
-      <span class="wcp-totTime"></span>
-    <a href="#" class="wcp-play">Play</a>
-    <a href="#" class="wcp-pause">Pause</a>
-    <a href="#" class="wcp-skip">Skip</a>
   </div>
+  <a class="visitWeird" href="http://weirdcanada.com/" title="weirdcanada.com">
+    <img src="wclogo.jpg" title="Weird Canada">
+    <span class="tr visitText">Visit Weird Canada</span>
+  </a>
   <script>
     window.weirdPlayer.main.setup(
       document.querySelector("#weirdPlayer"),
-      {useTestLoader: true});
+      {apiUrl: "http://weirdcanada.com/category/content/newcanadiana/",
+       jsonp: (window.document.domain !== "weirdcanada.com"),
+       autoplay: true});
   </script>
 </body>
 </html>
