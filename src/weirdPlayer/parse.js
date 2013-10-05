@@ -7,7 +7,8 @@
         query   = util.query,
         empty   = util.empty,
         log     = util.log,
-        attr    = util.attr;
+        attr    = util.attr,
+        zip     = util.zip;
 
     function parseFail(msg, failV) {
         log("parseFail: " + msg);
@@ -38,10 +39,13 @@
                     return arr.length > 0;
                 });
         if (empty(sourceLists))
-            return parseFail("no audio source nodes found", []);
+            sourceLists = parseMp3Links(html);
         return sourceLists;
     }
     exports.parseAudioNodes = parseAudioNodes;
+
+    var mp3LinkRe = new RegExp("^http://weirdcanada.com/wp-content/uploads/.+.mp3$"),
+        songLinkRe = new RegExp("^.*– (.+)$");  // Note the special dash!
 
     var titleRe  = new RegExp(
         "^(?:New Canadiana|Review) :: (.+) &#8211; (.+)$");
@@ -59,7 +63,39 @@
     };
     exports.parseArtistData = parseArtistData;
 
-    var songLinkRe = new RegExp("^.*– (.+)$");  // Note the special dash!
+    function parseMp3Links(html) {
+        return query(html, "a")
+            .filter(function (a) { return mp3LinkRe.exec(a.href); })
+            .map(function (a) {
+                var match = songLinkRe.exec(a.innerHTML);
+                return defined(match) ? [a.href, match[1]] : undefined;
+            })
+            .filter(defined)
+            .map(function (x) {
+                var source = document.createElement("source");
+                source.src = x[0];
+                source.type = 'audio/mpeg; codecs="mp3"';
+                return {sources: [source], title: x[1]};
+            });
+    }
+    exports.parseMp3Links = parseMp3Links;
+
+    function parseSongData(html) {
+        var sources = parseAudioNodes(html),
+            titles = parseSongTitleLinks(html);
+
+        if (! empty(sources)
+            && (sources.length === titles.length))
+            return zip(sources, titles).map(function (x) {
+                return {sources: x[0], title: x[1]};
+            });
+
+        var ret = parseMp3Links(html);
+        if (! empty(ret))
+            return ret;
+
+        return parseFail("no audio source nodes or mp3 links found", []);
+    }
 
     function parseSongTitleLinks(html) {
         return query(html, "p.audioTrack a")
@@ -100,29 +136,26 @@
 
         var html = htmlContent(post),
             artistData = parseArtistData(post),
-            sourceLists = parseAudioNodes(html),
-            songTitles = parseSongTitleLinks(html),
+            songData = parseSongData(html),
             imgNode = parseImage(html),
             url = parsePostUrl(post);
 
         if (! (defined(artistData)
-               && ! empty(sourceLists)
-               && defined(imgNode)
-               && sourceLists.length === songTitles.length)) {
+               && (! empty(songData))
+               && defined(imgNode))) {
             if (util.debug) storeBadResponse(jsonResponse);
             return [];
         }
 
-        var songs = [];
-        for (var i = 0; i < songTitles.length; i++)
-            songs.push({
+        return songData.map(function (sd) {
+            return {
                 artist: artistData.artist,
                 release: artistData.release,
                 image: imgNode,
-                sources: sourceLists[i],
-                title: songTitles[i],
-                postUrl: url});
-        return songs;
+                sources: sd.sources,
+                title: sd.title,
+                postUrl: url};
+        });
     }
     exports.parse = parse;
 

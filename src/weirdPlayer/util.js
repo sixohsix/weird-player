@@ -63,5 +63,15 @@ window.weirdPlayer.util = (function (window) {
     }
     exports.keys = keys;
 
+    function zip(arr0, arr1) {
+        var ret = [],
+            end = Math.min(arr0.length, arr1.length);
+        for (var i = 0; i < end; i++) {
+            ret.push([arr0[i], arr1[i]]);
+        }
+        return ret;
+    }
+    exports.zip = zip;
+
     return exports;
 })(window);

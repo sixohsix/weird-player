@@ -69,4 +69,17 @@
         eq(songs[0].title, "Au Parc Jarry", "got song title");
     });
 
+    test("parse old-school mp3 links", function () {
+        var songData = parse.parseMp3Links(parse.htmlContent(parse.singlePost(fixture.responses[9])));
+        eq(songData.length, 2);
+        eq(songData[0].title, "Orange Krush");
+    });
+
+    test("parse an old-school response", function () {
+        var songs = parse.parse(fixture.responses[9]);
+        eq(songs[0].artist, "Beach Velvet");
+        eq(songs[0].sources.length, 1);
+        eq(songs.length, 2);
+    });
+
 })(window);

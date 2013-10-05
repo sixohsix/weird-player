@@ -31,6 +31,7 @@
             if (! defined(trans[origHTML]))
                 log("missing " + targetLang + " translation for '"
                     + origHTML + "'");
+            node.innerHTML = attr(trans, origHTML, origHTML);
         });
         query(rootNode, ".trt").forEach(function (node) {
             var origTitle

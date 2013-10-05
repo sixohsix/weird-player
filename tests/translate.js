@@ -28,6 +28,7 @@
     test("translator object", function () {
         var node = window.document.createElement("div"),
             translations = {
+                'en': {},
                 'pi': {"translated if in tr": "totally translated"}};
         node.innerHTML = "<div class='tr'>translated if in tr</div><div>translated if in tr</div>";
         var t = createTranslator(translations, node);
