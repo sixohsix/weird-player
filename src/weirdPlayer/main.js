@@ -226,13 +226,16 @@
 
             model  = createWcpModel(loader),
             view   = createWcpView(model, playerNode, autoplay),
-            translator = createTranslator(translations, playerNode);
+            translator = createTranslator(translations, document);
 
         translator.setLang(getBrowserLanguage());
 
         ["en", "fr"].forEach(function (lang) {
             query(document, ".setLang-" + lang).forEach(function (node) {
-                node.onclick = translator.setLang.bind(translator, lang);
+                node.onclick = function () {
+                    translator.setLang(lang);
+                    return false;
+                };
             });
         });
 

@@ -44,8 +44,9 @@
             head = document.querySelector("head");
         jsonpIdx++;
         window[globalCbName] = function (json) {
-            callback(json);
             head.removeChild(scr);
+            delete window[globalCbName];
+            callback(json);
         };
         params.callback = globalCbName;
         scr.src = apiUrl + wpApiParamStr(params);  // YOLO

@@ -10,10 +10,12 @@
     var translations = {
         fr: {"Now playing:": "Joue maintenant:",
              "Play/Pause": "Commence/Pause",
-             "Next song": "Prochaine&nbsp;chanson"},
+             "Next&nbsp;song": "Prochaine&nbsp;chanson",
+             "Visit Weird Canada": "Visitez Weird-Canada"},
         de: {"Now playing:": "Jetzt spielt:",
-             "Play.Pause": "Spiel/Halt",
-             "Next song": "Nächste Lied"}
+             "Play/Pause": "Spiel/Halt",
+             "Next&nbsp;song": "Nächste&nbsp;Lied",
+             "Visit Weird Canada": "Checken Sie Weird-Canada aus"}
     };
     exports.translations = translations;
 

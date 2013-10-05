@@ -111,7 +111,14 @@ font-size: 0.8em;
 display: inline-block;
 padding-right: 20px;
 }
-
+.visitWeird {
+padding: 10px;
+display: block;
+text-align: center;
+}
+.visitText {
+display: block;
+}
 
 @media (min-width: 730px) {
 
@@ -153,6 +160,16 @@ height:100%;
 }
 .nowPlaying {
 display: block;
+}
+.visitWeird {
+text-align: left;
+padding-top: 40px;
+}
+.visitWeird img {
+vertical-align: middle;
+}
+.visitText {
+display: inline-block;
 }
 
 }

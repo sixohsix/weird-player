@@ -8,6 +8,7 @@ test_mode = [
     "src/weirdPlayer/parse.js",
     "src/weirdPlayer/loader.js",
     "src/weirdPlayer/actions.js",
+    "src/weirdPlayer/translate.js",
     "src/weirdPlayer/main.js"]
 
 real_mode = [
@@ -15,6 +16,7 @@ real_mode = [
     "src/weirdPlayer/parse.js",
     "src/weirdPlayer/loader.js",
     "src/weirdPlayer/actions.js",
+    "src/weirdPlayer/translate.js",
     "src/weirdPlayer/main.js"]
 
 def get_code(file_lst):
@@ -30,7 +32,7 @@ params = [
 
 headers = { "Content-type": "application/x-www-form-urlencoded" }
 
-for fl,fn in ((test_mode, "wcptest.js"), (real_mode, "wcp.js")):
+for fl,fn in ((real_mode, "wcp.js"),):
     conn = http.client.HTTPConnection('closure-compiler.appspot.com')
     p = list(params)
     p.append(('js_code', get_code(fl)))
