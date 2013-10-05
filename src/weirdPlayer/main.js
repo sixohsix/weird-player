@@ -209,7 +209,7 @@
         }
 
         wcpModel.skip();
-        window.setInterval(updateSongProgress, 500);
+        window.setInterval(updateSongProgress, 1000);
     }
 
     function setup(playerNode, options) {
