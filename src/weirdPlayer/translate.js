@@ -9,11 +9,11 @@
 
     var translations = {
         fr: {"Now playing:": "Joue maintenant:",
-             "Play": "Commence",
+             "Play/Pause": "Commence/Pause",
              "Stop": "Arret",
              "Next": "Prochaine"},
         de: {"Now playing:": "Jetzt spielt:",
-             "Play": "Spiel",
+             "Play.Pause": "Spiel/Halt",
              "Next": "Nexte",
              "Stop": "Halt"}
     };

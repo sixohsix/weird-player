@@ -28,11 +28,16 @@
             ec = actions.createEventCoordinator(),
 
             currentSong = undefined,
+            useAllSongsPerPost = true,
             upcomingSongs = [];
 
         function loadRandomSong() {  // Action
             loader.loadSongs(function (songs) {
-                if (! empty(songs)) upcomingSongs.push(choose(songs));
+                if (! empty(songs)) {
+                    var songsToAdd =
+                            useAllSongsPerPost ? songs : [choose(songs)];
+                    append(upcomingSongs, songsToAdd);
+                }
                 ac.doneAction();
             });
         }
@@ -114,9 +119,9 @@
         return "" + mins + ":" + secs;
     }
 
-    function createWcpView(wcpModel, playerNode) {
+    function createWcpView(wcpModel, playerNode, autoplay) {
         var audioNode,
-            shouldAutoplay = false,
+            shouldAutoplay = defined(autoplay) ? autoplay : false,
             waitingOnSkip  = false,
 
             progressBars   = query(playerNode, ".wcp-progress"),
@@ -209,7 +214,8 @@
 
     function setup(playerNode, options) {
         var debug         = attr(options, "debug", false),
-            useTestLoader = attr(options, "useTestLoader", false);
+            useTestLoader = attr(options, "useTestLoader", false),
+            autoplay      = attr(options, "autoplay", false);
 
         util.debug = debug;
 
@@ -219,7 +225,7 @@
                 : createLoader({apiUrl: options.apiUrl, jsonp: options.jsonp}),
 
             model  = createWcpModel(loader),
-            view   = createWcpView(model, playerNode),
+            view   = createWcpView(model, playerNode, autoplay),
             translator = createTranslator(translations, playerNode);
 
         translator.setLang(getBrowserLanguage());

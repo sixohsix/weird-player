@@ -1,6 +1,10 @@
 body {
 font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 color: rgb(85, 85, 85);
+margin: 0;
+}
+
+h1 {
 margin: 10px;
 }
 
@@ -10,12 +14,14 @@ text-decoration: none;
 }
 
 .songProgress {
+display:block;
 background: rgb(105, 105, 105);
 border: 0;
-width: 400px;
-margin-top: 40px;
+height: 20px;
+margin-top: 10px;
 margin-bottom: 10px;
 margin-left: -10px;
+width: 100%;
 }
 
 .songProgress::-moz-progress-bar {
@@ -30,31 +36,36 @@ border: 0;
 }
 #weirdPlayer {
 display: block;
-border: 1px solid rgb(105, 105, 105);
-width: 700px;
-height: 300px;
+border-bottom: 80px solid rgb(105, 105, 105);
+width:100%;
 overflow: hidden;
 }
 .imgContainer {
-display: inline-block;
-width: 300px;
+display: block;
+width:100%;
 height: 300px;
 overflow: hidden;
 vertical-align: top;
+text-align: center;
 align: middle;
 background: rgb(85, 85, 85);
 }
+.imgContainer div {
+vertical-align: middle;
+}
 .songDataContainer {
-display: inline-block;
-width: 380px;
-height: 300px;
+display: block;
 overflow: hidden;
+padding-top: 10px;
 padding-left: 10px;
 padding-right: 10px;
+padding-bottom: 40px;
+width: 100%;
+max-height: 300px;
 }
 
 .nowPlaying {
-display: block;
+display: none;
 font-size: 0.8em;
 }
 .artistAndTitle {
@@ -74,11 +85,57 @@ font-size: 0.8em;
 font-size: 0.8em;
 }
 .loadImg {
-font-size: 300px;
+font-size: 75px;
 line-height: 0.8;
 text-align: center;
+vertical-align: center;
 color: rgb(105, 105, 105);
+}
+.songMeta {
+display:block;
+height: 100px;
+width: 100%;
+}
+
+@media (min-width: 730px) {
+
+body {
+margin: 10px;
+}
+h1 {
+margin: 0;
+margin-bottom: 10px;
+}
+#weirdPlayer {
+width: 700px;
+height: 300px;
+border: 4px solid rgb(105, 105, 105);
+}
+.songProgress {
+width: 400px;
+margin-top: 40px;
+}
+.imgContainer {
+display: inline-block;
+width: 300px;
+height: 300px;
+}
+.songDataContainer {
+display: inline-block;
+width: 380px;
+height: 300px;
+padding-bottom: 0;
+}
+.loadImg {
+font-size: 300px;
 height: 100%;
 }
-.controls {
+.imgContainer img {
+width: 100%;
+height:100%;
+}
+.nowPlaying {
+display: block;
+}
+
 }

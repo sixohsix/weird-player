@@ -1,5 +1,6 @@
 <html>
 <head>
+  <title>Weird Canada Player</title>
   <meta charset="UTF-8">
   <link rel="stylesheet" type="text/css" href="player.css"></link>
   <script src="js/weirdPlayer/util.js"></script>
@@ -7,26 +8,27 @@
   <script src="js/weirdPlayer/parse.js"></script>
   <script src="js/weirdPlayer/loader.js"></script>
   <script src="js/weirdPlayer/translate.js"></script>
-
-  <script src="tests/fixture.js"></script>
   <script src="js/weirdPlayer/main.js"></script>
 </head>
 <body>
+  <h1>Weird Canada Player</h1>
   <div id="weirdPlayer">
     <div class="imgContainer">
-      <a href="#" class="wcp-playPause"><div class="wcp-img"><div class="loadImg">⌚</div></div></a>
+      <a href="#" class="wcp-playPause"><div class="wcp-img"><div class="loadImg">...</div></div></a>
     </div><!--
  --><div class="songDataContainer">
-      <span class="tr nowPlaying">Now playing:</span>
-      <a class="wcp-postUrl" href="#">
-        <span class="artistAndTitle">
-          <span class="wcp-artist">Loading...</span>
-          -
-          <span class="wcp-title"></span>
-        </span>
-        <span class="tr from">from</span>
-        <span class="wcp-release release">Loading...</span>
-      </a>
+      <div class="songMeta">
+        <span class="tr nowPlaying">Now playing:</span>
+        <a class="wcp-postUrl" href="#">
+          <span class="artistAndTitle">
+            <span class="wcp-artist">Loading...</span>
+            -
+            <span class="wcp-title"></span>
+          </span>
+          <span class="tr from">from</span>
+          <span class="wcp-release release">Loading...</span>
+        </a>
+      </div>
       <progress class="wcp-progress songProgress" min="0"></progress>
       <div class="controls">
         <div class="time">
@@ -44,8 +46,9 @@
     window.weirdPlayer.main.setup(
       document.querySelector("#weirdPlayer"),
       {apiUrl: "http://weirdcanada.com/category/content/newcanadiana/",
-       jsonp: true,
-       debug: true});
+       jsonp: (window.document.domain !== "weirdcanada.com"),
+       debug: true,
+       autoplay: true});
   </script>
 </body>
 </html>
