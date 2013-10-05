@@ -35,12 +35,15 @@
             <span class="wcp-totTime">0:00</span>
           </span>
         </div>
-        <a href="#" class="wcp-playPause tr ppText">Play/Pause</a>
-        <a href="#" class="wcp-skip tr next">Next&nbsp;song</a>
+        <a href="#" class="wcp-playPause trt" title="Play/Pause">
+          <img class="icon wcp-iconPlaying" src="pause.png">
+          <img class="icon wcp-iconPaused" src="play.png"></a>
+        <a href="#" class="wcp-skip trt" title="Next song"><img class="icon" src="skip.png"></a>
       </div>
       <ul class="languages">
         <li><a href="#" class="setLang-en">English</a>
-        <li><a href="#" class="setLang-fr">français</a>
+        <li><a href="#" class="setLang-fr">Français</a>
+        <li><a href="#" class="setLang-de">Deutsche</a>
       </ul>
     </div>
   </div>
@@ -55,5 +58,6 @@
        jsonp: (window.document.domain !== "weirdcanada.com"),
        autoplay: true});
   </script>
+  <div id="badResponses">
 </body>
 </html>
