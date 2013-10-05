@@ -121,6 +121,9 @@ text-align: center;
 .visitText {
 display: block;
 }
+#badResponses {
+display: none;
+}
 
 @media (min-width: 730px) {
 

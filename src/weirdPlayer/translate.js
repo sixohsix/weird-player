@@ -12,11 +12,13 @@
         fr: {"Now playing:": "Joue maintenant:",
              "Play/Pause": "Commence/Pause",
              "Next song": "Prochaine chanson",
-             "Visit Weird Canada": "Visitez Weird-Canada"},
+             "Visit Weird Canada": "Visitez Weird-Canada",
+             "from": "de"},
         de: {"Now playing:": "Jetzt spielt:",
              "Play/Pause": "Spiel/Halt",
              "Next song": "Nächste Lied",
-             "Visit Weird Canada": "Checken Sie Weird-Canada aus"}
+             "Visit Weird Canada": "Checken Sie Weird-Canada aus",
+             "from": "von"}
     };
     exports.translations = translations;
 

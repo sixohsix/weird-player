@@ -6,7 +6,8 @@
         defined = util.defined,
         query   = util.query,
         empty   = util.empty,
-        log     = util.log;
+        log     = util.log,
+        attr    = util.attr;
 
     function parseFail(msg, failV) {
         log("parseFail: " + msg);
@@ -42,8 +43,8 @@
     }
     exports.parseAudioNodes = parseAudioNodes;
 
-    var titleRe  = new RegExp("^New Canadiana :: (.+) &#8211; (.+)$"),
-        titleRe2 = new RegExp("^Review :: (.+) &#8211; (.+)$");
+    var titleRe  = new RegExp(
+        "^(?:New Canadiana|Review) :: (.+) &#8211; (.+)$");
 
     function parseArtistData(post) { // WpPost -> {artist, release}|undefined
         if (! defined(post.title))
@@ -51,8 +52,6 @@
 
         var title = post.title,
             match = titleRe.exec(title);
-        if (match === null)
-            match = titleRe2.exec(title);
         if (match === null)
             return parseFail("title match failed: " + post.title);
 
@@ -88,6 +87,13 @@
     }
     exports.parsePostUrl = parsePostUrl;
 
+    function storeBadResponse(jsonResponse) {
+        query(document, "#badResponses").forEach(function (n) {
+            var baddies = n.baddies = attr(n, "baddies", []);
+            baddies.push(jsonResponse);
+        });
+    }
+
     function parse(jsonResponse) { // WpJsonResponse -> [{artist, release, image, sources, title, postUrl}]
         var post = singlePost(jsonResponse);
         if (! defined(post)) return [];
@@ -100,11 +106,12 @@
             url = parsePostUrl(post);
 
         if (! (defined(artistData)
-               && defined(sourceLists)
-               && defined(songTitles)
+               && ! empty(sourceLists)
                && defined(imgNode)
-               && sourceLists.length === songTitles.length))
+               && sourceLists.length === songTitles.length)) {
+            if (util.debug) storeBadResponse(jsonResponse);
             return [];
+        }
 
         var songs = [];
         for (var i = 0; i < songTitles.length; i++)
