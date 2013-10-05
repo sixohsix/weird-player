@@ -6,6 +6,7 @@ margin: 0;
 
 h1 {
 margin: 10px;
+font-size: 1.0em;
 }
 
 a {
@@ -20,11 +21,13 @@ border: 0;
 height: 20px;
 margin-top: 10px;
 margin-bottom: 10px;
-margin-left: -10px;
 width: 100%;
 }
 
 .songProgress::-moz-progress-bar {
+background-color: rgb(255, 0, 255);
+}
+.songProgress::-webkit-progress-value {
 background-color: rgb(255, 0, 255);
 }
 .songProgress::progress-bar {
@@ -57,11 +60,13 @@ vertical-align: middle;
 display: block;
 overflow: hidden;
 padding-top: 10px;
-padding-left: 10px;
-padding-right: 10px;
-padding-bottom: 40px;
+padding-bottom: 10px;
 width: 100%;
 max-height: 300px;
+}
+.songMeta, .controls, .languages {
+padding-left: 10px;
+padding-right: 10px;
 }
 
 .nowPlaying {
@@ -96,6 +101,17 @@ display:block;
 height: 100px;
 width: 100%;
 }
+.languages {
+list-style: none;
+margin: 0;
+margin-top: 60px;
+font-size: 0.8em;
+}
+.languages li {
+display: inline-block;
+padding-right: 20px;
+}
+
 
 @media (min-width: 730px) {
 
@@ -104,6 +120,7 @@ margin: 10px;
 }
 h1 {
 margin: 0;
+font-size: 2em;
 margin-bottom: 10px;
 }
 #weirdPlayer {
@@ -122,7 +139,7 @@ height: 300px;
 }
 .songDataContainer {
 display: inline-block;
-width: 380px;
+width: 400px;
 height: 300px;
 padding-bottom: 0;
 }

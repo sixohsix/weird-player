@@ -230,6 +230,12 @@
 
         translator.setLang(getBrowserLanguage());
 
+        ["en", "fr"].forEach(function (lang) {
+            query(document, ".setLang-" + lang).forEach(function (node) {
+                node.onclick = translator.setLang.bind(translator, lang);
+            });
+        });
+
         playerNode.wcpModel = model;
         playerNode.wcpView  = view;
         playerNode.wcpTranslator = translator;
