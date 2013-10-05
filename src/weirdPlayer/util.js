@@ -56,5 +56,12 @@ window.weirdPlayer.util = (function (window) {
     }
     exports.choose = choose;
 
+    function keys(obj) {
+        var a = [];
+        for (var k in obj) { a.push(k); }
+        return a;
+    }
+    exports.keys = keys;
+
     return exports;
 })(window);

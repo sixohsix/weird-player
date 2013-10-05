@@ -11,6 +11,7 @@
         coerce  = util.coerce,
         choose  = util.choose,
         log     = util.log,
+        keys    = util.keys,
 
         actions = window.weirdPlayer.actions,
 
@@ -230,7 +231,7 @@
 
         translator.setLang(getBrowserLanguage());
 
-        ["en", "fr"].forEach(function (lang) {
+        keys(translations).forEach(function (lang) {
             query(document, ".setLang-" + lang).forEach(function (node) {
                 node.onclick = function () {
                     translator.setLang(lang);

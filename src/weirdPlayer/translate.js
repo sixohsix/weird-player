@@ -8,6 +8,7 @@
         defined = util.defined;
 
     var translations = {
+        en: {},
         fr: {"Now playing:": "Joue maintenant:",
              "Play/Pause": "Commence/Pause",
              "Next&nbsp;song": "Prochaine&nbsp;chanson",
