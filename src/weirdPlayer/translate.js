@@ -13,12 +13,14 @@
              "Play/Pause": "Commence/Pause",
              "Next song": "Prochaine chanson",
              "Visit Weird Canada": "Visitez Weird Canada",
-             "from": "de"},
+             "from": "de",
+             "Read the review": "Lisez la revue"},
         de: {"Now playing:": "Jetzt läuft:",
              "Play/Pause": "Abspielen/Pause",
              "Next song": "Nächstes Lied",
              "Visit Weird Canada": "Besuchen Sie Weird Canada",
-             "from": "von"}
+             "from": "von",
+             "Read the review": "Lesen Sie die Rezension"}
     };
     exports.translations = translations;
 

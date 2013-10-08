@@ -23,13 +23,14 @@
  --><div class="songDataContainer">
       <div class="songMeta">
         <span class="tr nowPlaying">Now playing:</span>
-        <a class="wcp-postUrl" href="#">
+        <a class="wcp-postUrl" href="#" target="_blank">
           <span class="artistAndTitle">
             <span class="wcp-artist">Loading...</span>
             -&nbsp;<span class="wcp-title"></span>
           </span>
           <span class="tr from">from</span>
           <span class="wcp-release release">Loading...</span>
+          <span class="tr readMore">Read the review</span>
         </a>
       </div>
       <progress class="wcp-progress songProgress" min="0"></progress>
@@ -52,10 +53,12 @@
       </ul>
     </div>
   </div>
-  <a class="visitWeird" href="http://weirdcanada.com/" title="weirdcanada.com">
-    <img src="wclogo.jpg" title="Weird Canada">
-    <span class="tr visitText">Visit Weird Canada</span>
-  </a>
+  <div class="visitWeird">
+    <a href="http://weirdcanada.com/" title="weirdcanada.com">
+      <img src="wclogo.jpg" title="Weird Canada">
+      <span class="tr visitText">Visit Weird Canada</span>
+    </a>
+  </div>
   <script>
     window.weirdPlayer.main.setup(
       document.querySelector("#weirdPlayer"),
