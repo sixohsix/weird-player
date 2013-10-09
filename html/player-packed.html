@@ -25,6 +25,7 @@
           </span>
           <span class="tr from">from</span>
           <span class="wcp-release release">Loading...</span>
+          <span class="tr readMore">Read the review</span>
         </a>
       </div>
       <progress class="wcp-progress songProgress" min="0"></progress>
@@ -47,15 +48,18 @@
       </ul>
     </div>
   </div>
-  <a class="visitWeird" href="http://weirdcanada.com/" title="weirdcanada.com">
-    <img src="wclogo.jpg" title="Weird Canada">
-    <span class="tr visitText">Visit Weird Canada</span>
-  </a>
+  <div class="visitWeird">
+    <a href="http://weirdcanada.com/" title="weirdcanada.com">
+      <img src="wclogo.jpg" title="Weird Canada">
+      <span class="tr visitText">Visit Weird Canada</span>
+    </a>
+  </div>
   <script>
     window.weirdPlayer.main.setup(
       document.querySelector("#weirdPlayer"),
       {apiUrl: "http://weirdcanada.com/category/content/newcanadiana/",
        jsonp: (window.document.domain !== "weirdcanada.com"),
+       debug: true,
        autoplay: true});
   </script>
   <div id="badResponses">
