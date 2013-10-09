@@ -18,7 +18,7 @@
         de: {"Now playing:": "Jetzt läuft:",
              "Play/Pause": "Abspielen/Pause",
              "Next song": "Nächstes Lied",
-             "Visit Weird Canada": "Besuchen Sie Weird Canada",
+             "Visit Weird Canada": "Checken Sie Weird Canada aus",
              "from": "von",
              "Read the review": "Lesen Sie die Rezension"}
     };
